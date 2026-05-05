@@ -1,0 +1,96 @@
+{
+  "projectType": "saas",
+  "projectName": "CreatAds",
+  "projectDescription": "AI-powered ad creative generation platform for Meta — create campaigns, audience profiles, and branded visuals in minutes via web app, CLI, SDK, or AI agent.",
+  "theme": "luma",
+  "primaryColor": "#7C3AED",
+  "lightColor": "#A78BFA",
+  "darkColor": "#5B21B6",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "User Guide",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/studio",
+              "features/campaigns",
+              "features/audience-profiles",
+              "features/brand-kit"
+            ]
+          },
+          {
+            "group": "Plans & Billing",
+            "pages": [
+              "billing/credits",
+              "billing/plans"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developer",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "developer/overview",
+              "developer/authentication"
+            ]
+          },
+          {
+            "group": "Interfaces",
+            "pages": [
+              "developer/cli",
+              "developer/sdk",
+              "developer/mcp"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "developer/workflows"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "AI-powered ad creative generation for Meta (Facebook & Instagram)",
+    "Campaign wizard with multi-format output (1:1, 4:5, 9:16, 1.91:1)",
+    "AI audience profile generation from brand descriptions",
+    "Brand Kit for consistent visual identity across all creatives",
+    "One-shot Studio IA for quick single-image generation",
+    "Developer platform: CLI, TypeScript SDK, and MCP server for AI agents",
+    "Direct Meta Ads publishing integration",
+    "Creative scoring and A/B testing support"
+  ],
+  "publicApiSurface": [
+    "CreatadsClient.listClients()",
+    "CreatadsClient.createClient(name)",
+    "CreatadsClient.listProfiles(clientId)",
+    "CreatadsClient.generateProfiles(clientId, summary, language)",
+    "CreatadsClient.listCampaigns(clientId)",
+    "CreatadsClient.createCampaign(params)",
+    "CreatadsClient.generateCreatives(campaignId)",
+    "CreatadsClient.listCreatives(campaignId)",
+    "CreatadsClient.getBrandKit(clientId)",
+    "pollUntilDone(client, campaignId, options)",
+    "creatads auth login / logout / whoami",
+    "creatads clients list / create / use",
+    "creatads campaigns list / create / generate",
+    "creatads creatives list",
+    "creatads profiles list / get / generate",
+    "creatads keys list / create / revoke",
+    "MCP: list_clients, create_client, list_campaigns, create_campaign, generate_creatives, list_creatives, list_profiles, get_profile, generate_profiles, get_brand_kit"
+  ]
+}

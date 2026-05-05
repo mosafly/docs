@@ -1,0 +1,75 @@
+---
+title: "Campaigns: Batch-Generate Creatives Across Profiles"
+description: "Generate multiple on-brand ad creatives across audience profiles and formats in a single operation — from a quick A/B test to a full campaign batch."
+---
+
+Campaigns let you generate many ad creatives in one operation. You pick your audience profiles, ad formats, and a volume target, and CreatAds distributes the work across every profile-and-format combination. The result is a gallery of scored creatives ready to download, publish, or iterate on.
+
+## Creating a campaign
+
+<Steps>
+  <Step title="Images">
+    Upload an optional **reference image** — an existing ad, brand photo, or mood board — to guide the AI's style and composition. You can also upload an optional **product image** to place your product in the generated scene.
+
+    Both inputs accept PNG and JPG files. Import from your computer, your library, or a template.
+  </Step>
+  <Step title="Targeting">
+    Configure who your ads are for and what they say:
+
+    - **Audience profiles** — select up to 12 profiles. Each profile generates its own set of visuals adapted to its persona, pain point, and messaging angle. If you have no profiles yet, [generate them first](/features/audience-profiles).
+    - **CTA text** — the action button label on the ad. For example: `Shop Now`, `Order`, `Get the deal`.
+    - **Offer text** — your main hook or promotion. For example: `-25% this weekend`, `Free delivery over $35`.
+    - **Brand Kit** — enable the toggle to apply your brand colors and visual identity to all generated creatives.
+  </Step>
+  <Step title="Settings">
+    Define the scope and output of the campaign:
+
+    - **Volume** — total number of creatives to generate (1–60). CreatAds distributes this evenly across your profile-and-format slots (see [Volume distribution](#volume-distribution) below).
+    - **Formats** — check one or more formats: `1:1`, `4:5`, `9:16`, `1.91:1`.
+    - **Language** — language for text generated on the visuals: French, English, Spanish, and more.
+    - **Context document** *(optional)* — upload a brief, a PDF, or paste a product page URL to give the AI additional context.
+
+    Click **Generate** to start. Progress displays in real time. Generation takes **2–5 minutes** depending on volume.
+  </Step>
+</Steps>
+
+## Volume distribution
+
+CreatAds divides your total volume evenly across all profile-and-format combinations (slots).
+
+**Formula:** profiles × formats = slots → volume ÷ slots = creatives per slot
+
+**Example:** 3 profiles × 2 formats = 6 slots. With a volume of 12, you get 2 creatives per slot.
+
+Use the table below to choose the right volume for your goal:
+
+| Goal | Recommended setup |
+|---|---|
+| Quick test | 1 profile × 1 format × volume 1 |
+| A/B testing | 2 profiles × 2 formats × volume 2 = 8 creatives |
+| Full campaign | 3–5 profiles × 3 formats × volume 3 = 27–45 creatives |
+| Agency multi-client | Weekly script via CLI or SDK |
+
+## Managing creatives
+
+Once generation is complete, your creatives appear in the campaign gallery.
+
+**Views**
+
+Switch between **grid** (visual preview) and **list** (profile, format, score, date) to browse results.
+
+**Filters**
+
+Narrow the gallery by audience profile or by format.
+
+**Actions on a creative**
+
+- **Download** — export a high-resolution PNG.
+- **Create variation** — generate a new creative in the same style with new content.
+- **Reformat** — regenerate the creative in a different aspect ratio.
+- **View tree** — see all variants and iterations branching from this creative.
+- **ZIP export** — select multiple creatives and download them as a single archive.
+
+## Creative scoring
+
+Each visual receives a score based on two signals: **visual hook** (how likely the image is to stop a scroll) and **profile alignment** (how well the creative matches its target audience profile). Use scores to prioritize which creatives to test first in Meta Ads.

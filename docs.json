@@ -1,0 +1,80 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "CreatAds",
+  "theme": "luma",
+  "colors": {
+    "primary": "#7C3AED",
+    "light": "#A78BFA",
+    "dark": "#5B21B6"
+  },
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Open App",
+      "href": "https://creatads.app"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "User Guide",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/studio",
+              "features/campaigns",
+              "features/audience-profiles",
+              "features/brand-kit"
+            ]
+          },
+          {
+            "group": "Plans & Billing",
+            "pages": [
+              "billing/credits",
+              "billing/plans"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developer",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "developer/overview",
+              "developer/authentication"
+            ]
+          },
+          {
+            "group": "Interfaces",
+            "pages": [
+              "developer/cli",
+              "developer/sdk",
+              "developer/mcp"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "developer/workflows"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "website": "https://creatads.app"
+    }
+  }
+}

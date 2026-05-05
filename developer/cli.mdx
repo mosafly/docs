@@ -1,0 +1,234 @@
+---
+title: "creatads-cli: Full Command Line Interface Reference"
+description: "Complete CLI reference for CreatAds — covers auth, clients, campaigns, creatives, profiles, and keys command groups with examples."
+---
+
+The `creatads` CLI lets you manage every part of the platform from your terminal or CI environment. Install it globally with npm, authenticate once, and then create clients, generate audience profiles, launch campaigns, and retrieve creatives — all without opening the web app.
+
+## Installation
+
+```bash
+npm install -g creatads-cli
+```
+
+## Global options
+
+```bash
+creatads --version   # 1.0.0
+creatads --help
+creatads <command> --help
+```
+
+## Command groups
+
+<AccordionGroup>
+  <Accordion title="auth — manage authentication credentials">
+    Authentication credentials are stored in `~/.creatads/config.json`.
+
+    ### `auth login`
+
+    Configure your API key interactively.
+
+    ```bash
+    creatads auth login
+    # Paste your API key (cads_...) when prompted
+    ```
+
+    ### `auth whoami`
+
+    Show the currently configured key prefix and API URL.
+
+    ```bash
+    creatads auth whoami
+    # Base URL: https://api.creatads.co/v1
+    # Key prefix: cads_2ad912d…
+    ```
+
+    ### `auth logout`
+
+    Remove stored credentials.
+
+    ```bash
+    creatads auth logout
+    ```
+  </Accordion>
+
+  <Accordion title="clients — manage client workspaces">
+    Each client represents a brand or advertiser workspace.
+
+    ### `clients list`
+
+    ```bash
+    creatads clients list
+    # ┌──────────────────────────────────────┬──────────┬─────────┬─────────────┐
+    # │ ID                                   │ Name     │ Default │ Created     │
+    # ├──────────────────────────────────────┼──────────┼─────────┼─────────────┤
+    # │ 89b18b5f-b3a8-4cf6-9b47-beafb9956b04 │ Bobotcho │ ✓       │ 4 mars 2026 │
+    # └──────────────────────────────────────┴──────────┴─────────┴─────────────┘
+    ```
+
+    ### `clients create <name>`
+
+    ```bash
+    creatads clients create "Nike France"
+    ```
+
+    ### `clients use <id>`
+
+    Set a default client so you don't have to pass `--client` to every subsequent command.
+
+    ```bash
+    creatads clients use 89b18b5f-b3a8-4cf6-9b47-beafb9956b04
+    # Default client set to: Bobotcho (89b18b5f-...)
+    ```
+
+    After running this command, all `--client` options become optional.
+  </Accordion>
+
+  <Accordion title="campaigns — create and generate ad campaigns">
+    ### `campaigns list`
+
+    ```bash
+    creatads campaigns list
+    creatads campaigns list --client <id>   # override default
+
+    # ┌──────────────────────────────────────┬────────────┬────────────┬────────┬────────────┐
+    # │ ID                                   │ Name       │ Status     │ Volume │ Created    │
+    # └──────────────────────────────────────┴────────────┴────────────┴────────┴────────────┘
+    ```
+
+    ### `campaigns create`
+
+    ```bash
+    creatads campaigns create \
+      --name "Summer Sale" \
+      --cta "Découvrir" \
+      --offer "-20% ce weekend" \
+      --aspect-ratio "1:1,9:16" \
+      --volume 6 \
+      --landing-url "https://example.com/sale"
+
+    # Options:
+    #   --client <id>          Client ID (uses default if set)
+    #   --name <n>             Campaign name (required)
+    #   --cta <text>           CTA button text
+    #   --offer <text>         Offer/promo text
+    #   --aspect-ratio <ratio> Comma-separated: 1:1, 4:5, 9:16, 1.91:1 (default: 1:1)
+    #   --volume <n>           Total creatives to generate (default: 1)
+    #   --landing-url <url>    Destination URL
+    ```
+
+    ### `campaigns generate <campaign-id>`
+
+    Launch generation and wait for results. Typical generation takes 2–5 minutes.
+
+    ```bash
+    creatads campaigns generate 03d75c13-a9a2-40a0-88b4-acf7a2e702f9
+
+    # ⠸ Generating creatives…
+    # ✔ Done — 3 creative(s) generated
+    #
+    # ┌──────────────────────────────────────┬───────────────┬──────────────┬────────────┐
+    # │ ID                                   │ Image URL     │ Aspect Ratio │ Created    │
+    # └──────────────────────────────────────┴───────────────┴──────────────┴────────────┘
+    ```
+
+    Pass `--no-wait` to fire-and-forget and retrieve results later with `creatives list`:
+
+    ```bash
+    --no-wait           Fire-and-forget (returns job_id immediately)
+    --timeout <seconds> Generation timeout in seconds (default: 180)
+    ```
+  </Accordion>
+
+  <Accordion title="creatives — retrieve generated ad images">
+    ### `creatives list <campaign-id>`
+
+    ```bash
+    creatads creatives list 03d75c13-a9a2-40a0-88b4-acf7a2e702f9
+    ```
+  </Accordion>
+
+  <Accordion title="profiles — manage audience personas">
+    Profiles are AI-generated audience personas used to target campaigns.
+
+    ### `profiles list`
+
+    ```bash
+    creatads profiles list
+    creatads profiles list --client <id>
+    ```
+
+    ### `profiles get <id>`
+
+    Show full detail of a single profile.
+
+    ```bash
+    creatads profiles get c4764793-527f-4afc-8126-e0a3a34cfe7d
+
+    # Seniors (65+) & Retirees in Abidjan
+    # ────────────────────────────────────────────────────────────
+    # ID          c4764793-527f-4afc-8126-e0a3a34cfe7d
+    # Client ID   89b18b5f-b3a8-4cf6-9b47-beafb9956b04
+    # Créé le     4 mars 2026
+    #
+    # Pain Point
+    #   Loss of dignity and fear of being a burden...
+    #
+    # Angle
+    #   The "Dignity & Independence" approach: Focus on maintaining privacy...
+    ```
+
+    ### `profiles generate`
+
+    Generate 10 AI personas from a brand or product description.
+
+    ```bash
+    creatads profiles generate \
+      --summary "French DTC brand selling minimalist leather wallets to urban professionals aged 25-40, focusing on quality and sustainability" \
+      --language fr
+
+    # Options:
+    #   --client <id>        Client ID (uses default if set)
+    #   --summary <text>     Brand/product description (required, richer = better profiles)
+    #   --language <lang>    fr (default) or en
+    ```
+
+    <Tip>The more detail you provide in `--summary`, the more specific and useful the generated personas will be.</Tip>
+  </Accordion>
+
+  <Accordion title="keys — manage API keys">
+    ### `keys list`
+
+    ```bash
+    creatads keys list
+    ```
+
+    ### `keys create`
+
+    ```bash
+    creatads keys create --name "Production server"
+    # ✔ Key created: cads_xxxx… (copy now — shown only once)
+    ```
+
+    <Warning>The API key is shown only once at creation time. Copy it immediately and store it in a secret manager.</Warning>
+
+    ### `keys revoke <id>`
+
+    ```bash
+    creatads keys revoke <key-id>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Configuration file
+
+The CLI stores credentials and preferences at `~/.creatads/config.json` with permissions set to `chmod 600`.
+
+```json
+{
+  "api_key": "cads_...",
+  "base_url": "https://api.creatads.co/v1",
+  "default_client_id": "89b18b5f-b3a8-4cf6-9b47-beafb9956b04"
+}
+```

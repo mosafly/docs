@@ -1,0 +1,85 @@
+---
+title: "CreatAds API Authentication: Keys, Security, and Errors"
+description: "Generate and manage CreatAds API keys, pass them in requests, secure them with environment variables, and handle authentication errors."
+---
+
+Every request to the CreatAds API must include an API key. Keys identify your account, enforce your subscription's generation quota, and control access to your resources. The CLI and TypeScript SDK handle this automatically once configured — if you're making raw REST calls, you pass the key yourself in a request header.
+
+## API key format
+
+CreatAds API keys start with `cads_` followed by 64 hexadecimal characters. Keys are linked to your user account, not to a specific client workspace, so one key works across all your workspaces. An active **Studio**, **Agence**, or **Scale** subscription is required — keys from accounts without a premium subscription will return a `403 premium_required` error.
+
+## Generate a key
+
+<Steps>
+  <Step title="Open Settings">
+    Go to **Settings → API** in the CreatAds dashboard.
+  </Step>
+  <Step title="Create a new key">
+    Click **New API Key** and give it a descriptive name — for example, "Production" or "Claude Code".
+  </Step>
+  <Step title="Copy the key">
+    Copy the key immediately. It is shown **only once** and cannot be retrieved after you close the dialog.
+  </Step>
+</Steps>
+
+Alternatively, if you already have the CLI installed and authenticated, create a key directly from your terminal:
+
+```bash
+creatads keys create --name "My integration"
+```
+
+## Use a key in requests
+
+Pass your API key in the `X-Api-Key` header on every REST request:
+
+```bash
+curl -X POST https://api.creatads.co/v1 \
+  -H "Content-Type: application/json" \
+  -H "X-Api-Key: cads_your_key_here" \
+  -d '{"action": "list_clients"}'
+```
+
+The CLI and TypeScript SDK handle this header automatically once you configure your key — you don't need to set it manually when using those interfaces.
+
+## Keep your key secure
+
+<Warning>
+  Never commit your API key to source control. If a key is exposed in a public repository, revoke it immediately and create a replacement.
+</Warning>
+
+Store your key in an environment variable and load it at runtime:
+
+```bash
+# .env
+CREATADS_API_KEY=cads_...
+```
+
+```typescript
+import { CreatadsClient } from "@creatads/sdk";
+
+const client = new CreatadsClient(process.env.CREATADS_API_KEY!);
+```
+
+## Rotate a compromised key
+
+If you suspect a key has been exposed, revoke it immediately and issue a replacement:
+
+```bash
+creatads keys list                        # find the key ID
+creatads keys revoke <id>                 # revoke immediately
+creatads keys create --name "Replacement" # create a new key
+```
+
+Update any services or environment variables that used the revoked key before resuming normal operations.
+
+## Error reference
+
+| HTTP status | Error code | Meaning |
+|---|---|---|
+| 401 | `invalid_api_key` | Key not found, revoked, or malformed |
+| 403 | `premium_required` | No active subscription |
+| 403 | `forbidden` | Resource doesn't belong to your account |
+| 400 | `missing_param` | Required parameter not provided |
+| 404 | `not_found` | Resource doesn't exist |
+| 500 | — | Server error — wait briefly and retry |

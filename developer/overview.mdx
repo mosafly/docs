@@ -1,0 +1,56 @@
+---
+title: "CreatAds Developer Platform: CLI, SDK, and MCP Server"
+description: "Access the full CreatAds generation pipeline programmatically via CLI, TypeScript SDK, or MCP Server — all sharing the same API key authentication."
+---
+
+The CreatAds developer platform gives you programmatic access to the same AI ad creative generation pipeline that powers the web app. You can generate audience profiles, create campaigns, and produce Meta ad creatives from your terminal, your Node.js code, or an AI agent — using three interfaces that all share the same API key and the same underlying REST API.
+
+## Prerequisites
+
+Before you can use any developer interface, you need:
+
+- A CreatAds account at [creatads.app](https://creatads.app)
+- An active subscription — **Studio**, **Agence**, or **Scale** (the developer platform is premium-only)
+- An API key — generate one in **Settings → API**
+
+<Info>
+  All three interfaces authenticate with the same API key. See [Authentication](/developer/authentication) for setup instructions.
+</Info>
+
+## Choose your interface
+
+<CardGroup cols={3}>
+  <Card title="CLI" icon="terminal" href="/developer/cli">
+    Automate creative generation from the command line, shell scripts, or CI/CD pipelines.
+  </Card>
+  <Card title="TypeScript SDK" icon="brackets-curly" href="/developer/sdk">
+    Integrate generation directly into Node.js applications with full type safety.
+  </Card>
+  <Card title="MCP Server" icon="robot" href="/developer/mcp">
+    Let Claude Code or other AI agents generate creatives on your behalf.
+  </Card>
+</CardGroup>
+
+## Interface comparison
+
+| Interface | Package | Best for |
+|---|---|---|
+| CLI | `creatads-cli` (npm) | Terminal, scripts, CI/CD |
+| TypeScript SDK | `@creatads/sdk` (npm) | Node.js apps, custom integrations |
+| MCP Server | `creatads-mcp` | Claude Code, AI agents |
+
+All three interfaces use the same `X-Api-Key` header against the same REST API. You can switch between them at any time without changing your API key or account settings.
+
+## Quotas and rate limits
+
+Generation quotas are shared with the web app — the same monthly limit applies regardless of which interface you use to generate.
+
+| Plan | Generations per month |
+|---|---|
+| Studio | 60 |
+| Agence | 250 |
+| Scale | Unlimited |
+
+<Note>
+  API requests such as listing clients, creating campaigns, or fetching results do **not** count against your quota. Only calls that trigger AI generation do.
+</Note>

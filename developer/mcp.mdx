@@ -1,0 +1,177 @@
+---
+title: "MCP Server: Run CreatAds Tools from Claude & AI Agents"
+description: "Connect the CreatAds MCP server to Claude Code or any MCP-compatible agent and generate Meta ad creatives directly from a conversation."
+---
+
+The `creatads-mcp` server exposes the CreatAds API as MCP tools, allowing Claude Code and any MCP-compatible agent to generate ad creatives directly from a conversation. Once configured, you can brief an AI agent in plain language and have it call `list_profiles`, `create_campaign`, and `generate_creatives` autonomously — no manual API calls required.
+
+## Setup
+
+<Steps>
+  <Step title="Install and configure the CLI">
+    Install the CLI globally, authenticate, and set your active client workspace:
+
+    ```bash
+    npm install -g creatads-cli
+    creatads auth login
+    creatads clients use <your-client-id>
+    ```
+
+    The MCP server reads `~/.creatads/config.json` — the same config file as the CLI.
+  </Step>
+
+  <Step title="Register in Claude Code">
+    Add the MCP server entry to `~/.claude/settings.json`:
+
+    ```json
+    {
+      "mcpServers": {
+        "creatads": {
+          "command": "npx",
+          "args": ["creatads-mcp"]
+        }
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Verify the connection">
+    Open a Claude Code session and run:
+
+    ```
+    Use the creatads list_clients tool
+    ```
+
+    Claude should return your list of client workspaces. If it does, the MCP server is working correctly.
+  </Step>
+</Steps>
+
+## Available tools
+
+<AccordionGroup>
+  <Accordion title="list_clients">
+    List all client workspaces.
+
+    No parameters required.
+  </Accordion>
+
+  <Accordion title="create_client">
+    Create a new client workspace for a brand.
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `name` | string | Yes | Brand name |
+  </Accordion>
+
+  <Accordion title="list_campaigns">
+    List all campaigns for a client.
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `client_id` | string | Yes | The client workspace ID |
+  </Accordion>
+
+  <Accordion title="create_campaign">
+    Create a new campaign with a brief.
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `client_id` | string | Yes | The client workspace ID |
+    | `name` | string | Yes | Campaign name |
+    | `cta_text` | string | No | Call-to-action text, e.g. `"Découvrir"`, `"Shop now"` |
+    | `offer_text` | string | No | Offer or promo text, e.g. `"-20% ce weekend"` |
+    | `aspect_ratio` | string | No | Comma-separated formats: `"1:1"`, `"4:5"`, `"9:16"`, `"1.91:1"` |
+    | `volume` | number | No | Total creatives to generate (1–60) |
+    | `selected_profile_ids` | string[] | No | Profile IDs from `list_profiles` |
+    | `landing_url` | string | No | Destination URL for the ad |
+  </Accordion>
+
+  <Accordion title="generate_creatives">
+    Generate AI visuals for a campaign. Polls automatically until done.
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `campaign_id` | string | Yes | The campaign ID |
+    | `wait` | boolean | No | `true` = wait for results (default), `false` = fire-and-forget |
+
+    Returns an array of creatives with `image_url` when `wait=true`.
+  </Accordion>
+
+  <Accordion title="list_creatives">
+    List generated creatives for a campaign.
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `campaign_id` | string | Yes | The campaign ID |
+  </Accordion>
+
+  <Accordion title="list_profiles">
+    List audience personas for a client.
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `client_id` | string | Yes | The client workspace ID |
+  </Accordion>
+
+  <Accordion title="get_profile">
+    Get full detail of a single profile.
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `profile_id` | string | Yes | The profile ID |
+  </Accordion>
+
+  <Accordion title="generate_profiles">
+    Generate 10 AI audience personas from a brand description.
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `client_id` | string | Yes | The client workspace ID |
+    | `research_summary` | string | Yes | Brand or product description |
+    | `language` | string | No | `"fr"` (default) or `"en"` |
+  </Accordion>
+
+  <Accordion title="get_brand_kit">
+    Get the brand kit (colors, name, description) for a client.
+
+    | Parameter | Type | Required | Description |
+    |-----------|------|----------|-------------|
+    | `client_id` | string | Yes | The client workspace ID |
+  </Accordion>
+</AccordionGroup>
+
+## Typical call sequence
+
+When working with an agent, the standard order of calls is:
+
+```
+1. list_clients                          → get client_id
+2. list_profiles(client_id)              → get profile IDs
+   └─ or generate_profiles(...)         → if no profiles yet
+3. create_campaign(client_id, ...)       → get campaign_id
+4. generate_creatives(campaign_id)       → wait=true, get image_url[]
+```
+
+## Example agent workflow
+
+Give Claude Code a prompt like the one below and it will autonomously call `list_profiles` → `create_campaign` → `generate_creatives` and return the image URLs:
+
+```
+I need to launch a campaign for my client Bobotcho (bidet brand).
+Use the creatads tools to:
+1. List the existing profiles and pick the 2 most relevant for urban eco-conscious buyers
+2. Create a campaign called "Été 2026" with CTA "Découvrir", offer "Livraison offerte", 
+   formats 1:1 and 9:16, volume 4
+3. Generate the creatives and return the image URLs
+```
+
+## Error messages
+
+The MCP server returns human-readable errors as text content:
+
+| Situation | Message |
+|-----------|---------|
+| Not configured | `Not configured. Run: creatads auth login` |
+| Invalid key | `Invalid or revoked API key. Run: creatads auth login` |
+| No subscription | `Premium subscription required. Upgrade at https://creatads.app/pricing` |
+| Missing param | `Missing required parameter: <name>` |
